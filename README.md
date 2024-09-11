@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Retro GitHub Profile with AI Snake Game</title>
+    <title>My Retro GitHub Profile with algorithim Snake Game</title>
     <style>
         body {
             background-color: #000000;
@@ -31,7 +31,7 @@
 </head>
 <body>
     <h1>Welcome to My GitHub Profile!</h1>
-    <p class="rainbow-text">Watch AI play Snake!</p>
+    <p class="rainbow-text">Watch my Algorithim play Snake!</p>
     <canvas id="gameCanvas" width="300" height="300"></canvas>
 
     <script>
