@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Retro GitHub Profile with AI Snake Game</title>
+    <title>Welcome to my Github!</title>
     <style>
         body {
             background-color: #000000;
@@ -23,181 +23,138 @@
             font-size: 24px;
             font-weight: bold;
         }
-        #gameCanvas {
-            border: 2px solid #00FF00;
+        .animation-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             margin-top: 20px;
+        }
+        .animation {
+            background-color: #001100;
+            border: 2px solid #00FF00;
+            padding: 10px;
+            width: 300px;
+        }
+        canvas {
+            border: 2px solid #00FF00;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to My GitHub Profile!</h1>
-    <p class="rainbow-text">Watch AI play Snake!</p>
-    <canvas id="gameCanvas" width="300" height="300"></canvas>
+    <h1>Retro Math and Science Animations</h1>
+    <p class="rainbow-text">Watch cool visualizations!</p>
+    <div class="animation-container">
+        <div class="animation">
+            <h2>Bubble Sort</h2>
+            <canvas id="bubbleSortCanvas" width="280" height="200"></canvas>
+        </div>
+        <div class="animation">
+            <h2>Sine Wave</h2>
+            <canvas id="sineWaveCanvas" width="280" height="200"></canvas>
+        </div>
+        <div class="animation">
+            <h2>Solar System</h2>
+            <canvas id="solarSystemCanvas" width="280" height="200"></canvas>
+        </div>
+    </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        const scale = 10;
-        const rows = canvas.height / scale;
-        const columns = canvas.width / scale;
-        
-        let snake;
-        let fruit;
-        
-        function setup() {
-            snake = new Snake();
-            fruit = new Fruit();
-            fruit.pickLocation();
-            
-            window.setInterval(() => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                fruit.draw();
-                snake.update();
-                snake.draw();
-                
-                if (snake.eat(fruit)) {
-                    fruit.pickLocation();
-                }
-                
-                snake.checkCollision();
-                snake.aiMove();
-            }, 100);
-        }
-        
-        function Snake() {
-            this.x = 0;
-            this.y = 0;
-            this.xSpeed = scale * 1;
-            this.ySpeed = 0;
-            this.total = 0;
-            this.tail = [];
-            
-            this.draw = function() {
-                ctx.fillStyle = "#FFFFFF";
-                for (let i=0; i<this.tail.length; i++) {
-                    ctx.fillRect(this.tail[i].x, this.tail[i].y, scale, scale);
-                }
-                
-                ctx.fillRect(this.x, this.y, scale, scale);
-            }
-            
-            this.update = function() {
-                for (let i=0; i<this.tail.length - 1; i++) {
-                    this.tail[i] = this.tail[i+1];
-                }
-                
-                this.tail[this.total - 1] = { x: this.x, y: this.y };
-                
-                this.x += this.xSpeed;
-                this.y += this.ySpeed;
-                
-                if (this.x > canvas.width) {
-                    this.x = 0;
-                }
-                if (this.y > canvas.height) {
-                    this.y = 0;
-                }
-                if (this.x < 0) {
-                    this.x = canvas.width - scale;
-                }
-                if (this.y < 0) {
-                    this.y = canvas.height - scale;
-                }
-            }
-            
-            this.changeDirection = function(direction) {
-                switch(direction) {
-                    case 'Up':
-                        this.xSpeed = 0;
-                        this.ySpeed = -scale * 1;
-                        break;
-                    case 'Down':
-                        this.xSpeed = 0;
-                        this.ySpeed = scale * 1;
-                        break;
-                    case 'Left':
-                        this.xSpeed = -scale * 1;
-                        this.ySpeed = 0;
-                        break;
-                    case 'Right':
-                        this.xSpeed = scale * 1;
-                        this.ySpeed = 0;
-                        break;
-                }
-            }
-            
-            this.eat = function(fruit) {
-                if (this.x === fruit.x && this.y === fruit.y) {
-                    this.total++;
-                    return true;
-                }
-                return false;
-            }
-            
-            this.checkCollision = function() {
-                for (let i=0; i<this.tail.length; i++) {
-                    if (this.x === this.tail[i].x && this.y === this.tail[i].y) {
-                        this.total = 0;
-                        this.tail = [];
+        // Bubble Sort Animation
+        const bubbleSortCanvas = document.getElementById('bubbleSortCanvas');
+        const bsCtx = bubbleSortCanvas.getContext('2d');
+        let bsArray = Array.from({length: 20}, () => Math.floor(Math.random() * 180) + 10);
+        let bsIndex = 0;
+
+        function bubbleSort() {
+            if (bsIndex < bsArray.length - 1) {
+                for (let j = 0; j < bsArray.length - bsIndex - 1; j++) {
+                    if (bsArray[j] > bsArray[j + 1]) {
+                        [bsArray[j], bsArray[j + 1]] = [bsArray[j + 1], bsArray[j]];
                     }
                 }
+                bsIndex++;
+            } else {
+                bsIndex = 0;
+                bsArray = Array.from({length: 20}, () => Math.floor(Math.random() * 180) + 10);
             }
-            
-            this.aiMove = function() {
-                let dx = fruit.x - this.x;
-                let dy = fruit.y - this.y;
-                
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0 && this.xSpeed >= 0) this.changeDirection('Right');
-                    else if (dx < 0 && this.xSpeed <= 0) this.changeDirection('Left');
-                } else {
-                    if (dy > 0 && this.ySpeed >= 0) this.changeDirection('Down');
-                    else if (dy < 0 && this.ySpeed <= 0) this.changeDirection('Up');
-                }
-                
-                // Avoid immediate collisions
-                let nextX = this.x + this.xSpeed;
-                let nextY = this.y + this.ySpeed;
-                for (let i = 0; i < this.tail.length; i++) {
-                    if (nextX === this.tail[i].x && nextY === this.tail[i].y) {
-                        // Choose a safe direction
-                        let directions = ['Up', 'Down', 'Left', 'Right'];
-                        for (let dir of directions) {
-                            this.changeDirection(dir);
-                            nextX = this.x + this.xSpeed;
-                            nextY = this.y + this.ySpeed;
-                            let safe = true;
-                            for (let j = 0; j < this.tail.length; j++) {
-                                if (nextX === this.tail[j].x && nextY === this.tail[j].y) {
-                                    safe = false;
-                                    break;
-                                }
-                            }
-                            if (safe) break;
-                        }
-                        break;
-                    }
-                }
-            }
+            drawBubbleSort();
         }
-        
-        function Fruit() {
-            this.x;
-            this.y;
-            
-            this.pickLocation = function() {
-                this.x = (Math.floor(Math.random() * columns - 1) + 1) * scale;
-                this.y = (Math.floor(Math.random() * rows - 1) + 1) * scale;
-            }
-            
-            this.draw = function() {
-                ctx.fillStyle = "#FF0000";
-                ctx.fillRect(this.x, this.y, scale, scale)
-            }
+
+        function drawBubbleSort() {
+            bsCtx.fillStyle = '#000000';
+            bsCtx.fillRect(0, 0, bubbleSortCanvas.width, bubbleSortCanvas.height);
+            bsArray.forEach((value, index) => {
+                bsCtx.fillStyle = index === bsIndex ? '#FF00FF' : '#00FF00';
+                bsCtx.fillRect(index * 14, bubbleSortCanvas.height - value, 12, value);
+            });
         }
-        
-        setup();
+
+        // Sine Wave Animation
+        const sineWaveCanvas = document.getElementById('sineWaveCanvas');
+        const swCtx = sineWaveCanvas.getContext('2d');
+        let time = 0;
+
+        function drawSineWave() {
+            swCtx.fillStyle = '#000000';
+            swCtx.fillRect(0, 0, sineWaveCanvas.width, sineWaveCanvas.height);
+            swCtx.beginPath();
+            for (let x = 0; x < sineWaveCanvas.width; x++) {
+                let y = Math.sin(x * 0.05 + time) * 50 + sineWaveCanvas.height / 2;
+                swCtx.lineTo(x, y);
+            }
+            swCtx.strokeStyle = '#00FF00';
+            swCtx.stroke();
+            time += 0.1;
+        }
+
+        // Solar System Animation
+        const solarSystemCanvas = document.getElementById('solarSystemCanvas');
+        const ssCtx = solarSystemCanvas.getContext('2d');
+        let planets = [
+            {radius: 5, orbit: 40, angle: 0, speed: 0.02, color: '#FFA500'},
+            {radius: 3, orbit: 65, angle: 0, speed: 0.01, color: '#00FFFF'},
+            {radius: 4, orbit: 90, angle: 0, speed: 0.005, color: '#FF0000'}
+        ];
+
+        function drawSolarSystem() {
+            ssCtx.fillStyle = '#000000';
+            ssCtx.fillRect(0, 0, solarSystemCanvas.width, solarSystemCanvas.height);
+            
+            // Draw sun
+            ssCtx.beginPath();
+            ssCtx.arc(solarSystemCanvas.width / 2, solarSystemCanvas.height / 2, 15, 0, Math.PI * 2);
+            ssCtx.fillStyle = '#FFFF00';
+            ssCtx.fill();
+
+            // Draw planets
+            planets.forEach(planet => {
+                planet.angle += planet.speed;
+                let x = Math.cos(planet.angle) * planet.orbit + solarSystemCanvas.width / 2;
+                let y = Math.sin(planet.angle) * planet.orbit + solarSystemCanvas.height / 2;
+                
+                ssCtx.beginPath();
+                ssCtx.arc(x, y, planet.radius, 0, Math.PI * 2);
+                ssCtx.fillStyle = planet.color;
+                ssCtx.fill();
+
+                // Draw orbit
+                ssCtx.beginPath();
+                ssCtx.arc(solarSystemCanvas.width / 2, solarSystemCanvas.height / 2, planet.orbit, 0, Math.PI * 2);
+                ssCtx.strokeStyle = '#003300';
+                ssCtx.stroke();
+            });
+        }
+
+        // Animation loop
+        function animate() {
+            bubbleSort();
+            drawSineWave();
+            drawSolarSystem();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
     </script>
 </body>
 </html>
