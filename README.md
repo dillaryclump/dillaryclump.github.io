@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Retro GitHub Profile with Snake Game</title>
+    <title>My Retro GitHub Profile with AI Snake Game</title>
     <style>
         body {
             background-color: #000000;
@@ -23,28 +23,6 @@
             font-size: 24px;
             font-weight: bold;
         }
-        .blink {
-            animation: blinker 1s linear infinite;
-        }
-        @keyframes blinker {
-            50% { opacity: 0; }
-        }
-        .marquee {
-            width: 100%;
-            overflow: hidden;
-            background: #0000FF;
-            color: #FFFF00;
-        }
-        .marquee span {
-            display: inline-block;
-            width: max-content;
-            padding-left: 100%;
-            animation: marquee 15s linear infinite;
-        }
-        @keyframes marquee {
-            0%   { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
         #gameCanvas {
             border: 2px solid #00FF00;
             margin-top: 20px;
@@ -53,17 +31,8 @@
 </head>
 <body>
     <h1>Welcome to My GitHub Profile!</h1>
-    <p class="rainbow-text">Coding like it's 1999!</p>
-    <p class="blink">Check out my repositories below</p>
-    <div class="marquee">
-        <span>Thanks for visiting my profile! Star my repos if you like them!</span>
-    </div>
-    <p>
-        <img src="/api/placeholder/88/31" alt="Under Construction">
-    </p>
-    <h2>Play Snake Game!</h2>
+    <p class="rainbow-text">Watch AI play Snake!</p>
     <canvas id="gameCanvas" width="300" height="300"></canvas>
-    <p>Use arrow keys to control the snake. Eat the food to grow!</p>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -74,8 +43,9 @@
         const columns = canvas.width / scale;
         
         let snake;
+        let fruit;
         
-        (function setup() {
+        function setup() {
             snake = new Snake();
             fruit = new Fruit();
             fruit.pickLocation();
@@ -91,13 +61,9 @@
                 }
                 
                 snake.checkCollision();
-            }, 250);
-        }());
-        
-        window.addEventListener('keydown', ((evt) => {
-            const direction = evt.key.replace('Arrow', '');
-            snake.changeDirection(direction);
-        }));
+                snake.aiMove();
+            }, 100);
+        }
         
         function Snake() {
             this.x = 0;
@@ -133,10 +99,10 @@
                     this.y = 0;
                 }
                 if (this.x < 0) {
-                    this.x = canvas.width;
+                    this.x = canvas.width - scale;
                 }
                 if (this.y < 0) {
-                    this.y = canvas.height;
+                    this.y = canvas.height - scale;
                 }
             }
             
@@ -177,6 +143,43 @@
                     }
                 }
             }
+            
+            this.aiMove = function() {
+                let dx = fruit.x - this.x;
+                let dy = fruit.y - this.y;
+                
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > 0 && this.xSpeed >= 0) this.changeDirection('Right');
+                    else if (dx < 0 && this.xSpeed <= 0) this.changeDirection('Left');
+                } else {
+                    if (dy > 0 && this.ySpeed >= 0) this.changeDirection('Down');
+                    else if (dy < 0 && this.ySpeed <= 0) this.changeDirection('Up');
+                }
+                
+                // Avoid immediate collisions
+                let nextX = this.x + this.xSpeed;
+                let nextY = this.y + this.ySpeed;
+                for (let i = 0; i < this.tail.length; i++) {
+                    if (nextX === this.tail[i].x && nextY === this.tail[i].y) {
+                        // Choose a safe direction
+                        let directions = ['Up', 'Down', 'Left', 'Right'];
+                        for (let dir of directions) {
+                            this.changeDirection(dir);
+                            nextX = this.x + this.xSpeed;
+                            nextY = this.y + this.ySpeed;
+                            let safe = true;
+                            for (let j = 0; j < this.tail.length; j++) {
+                                if (nextX === this.tail[j].x && nextY === this.tail[j].y) {
+                                    safe = false;
+                                    break;
+                                }
+                            }
+                            if (safe) break;
+                        }
+                        break;
+                    }
+                }
+            }
         }
         
         function Fruit() {
@@ -193,6 +196,8 @@
                 ctx.fillRect(this.x, this.y, scale, scale)
             }
         }
+        
+        setup();
     </script>
 </body>
 </html>
